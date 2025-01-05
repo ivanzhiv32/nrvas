@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=66.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "app"
+version = "0.1.0"
+dependencies = [
+    "pyTelegramBotAPI<=4.25.0"
+]
