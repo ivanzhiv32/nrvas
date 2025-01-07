@@ -1,7 +1,7 @@
-import os
-from pathlib import Path
+import tomllib
 from dataclasses import dataclass
 
+from app.constants import BASE_DIR
 
 
 @dataclass
@@ -11,7 +11,10 @@ class BotConfig:
 
 
 def load_bot_secret() -> BotConfig:
+    with open(BASE_DIR / 'config.toml', 'rb') as file:
+        data = tomllib.load(file)
+        project_config = data['project']
     return BotConfig(
-        token=os.getenv('TOKEN'),
-        id_admin=int(os.getenv('ID_ADMIN')),
+        token=project_config['token'],
+        id_admin=project_config['id_admin']
     )
