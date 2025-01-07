@@ -21,3 +21,7 @@
 ### Запуск проекта
 
 `python -m app`
+
+# Конфигурация проекта
+
+[config.toml](./src/app/config.toml)
