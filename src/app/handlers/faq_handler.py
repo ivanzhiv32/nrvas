@@ -2,7 +2,7 @@ from telebot import TeleBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from app.constants import BASE_DIR
-from main import excel_to_2d_array
+from app.utils import excel_to_2d_array
 
 
 def faq_handler(message: Message, bot: TeleBot) -> None:
