@@ -1,5 +1,7 @@
-from telebot import TeleBot
+from telebot import TeleBot, StateMemoryStorage
 
+from app.callbacks.nationality_callback import nationality_callback
+from app.callbacks.recruitment_callback import recruitment_callback
 from app.config import BotConfig, load_bot_secret
 from app.constants import BASE_DIR
 from app.handlers.documents_handler import documents_handler
@@ -9,6 +11,19 @@ from app.handlers.question_handler import incoming_question_handler, question_ha
 from app.handlers.recruitment_handler import type_recruitment_handler
 from app.handlers.start_handler import StartHandler
 from app.handlers.telegram_handler import telegram_channel_handler
+
+
+def register_callbacks(bot: TeleBot, config: BotConfig) -> None:
+    bot.register_callback_query_handler(
+        recruitment_callback,
+        func=lambda call: call.data in ('winter', 'summer'),
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        nationality_callback,
+        func=lambda call: call.data in ('yes_russian', 'no_russian'),
+        pass_bot=True,
+    )
 
 
 def register_handlers(bot: TeleBot, config: BotConfig) -> None:
@@ -66,9 +81,13 @@ def register_handlers(bot: TeleBot, config: BotConfig) -> None:
 
 def main():
     bot_config = load_bot_secret()
+    state_storage = StateMemoryStorage()
     bot = TeleBot(
         token=bot_config.token,
+        state_storage=state_storage,
+        use_class_middlewares=True,
     )
+    register_callbacks(bot, bot_config)
     register_handlers(bot, bot_config)
 
     bot.polling()
