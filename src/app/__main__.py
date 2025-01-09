@@ -2,6 +2,7 @@ from telebot import TeleBot, StateMemoryStorage
 
 from app.callbacks.nationality_callback import nationality_callback
 from app.callbacks.recruitment_callback import recruitment_callback
+from app.callbacks.university_callback import university_callback
 from app.config import BotConfig, load_bot_secret
 from app.constants import BASE_DIR
 from app.handlers.documents_handler import documents_handler
@@ -22,6 +23,11 @@ def register_callbacks(bot: TeleBot, config: BotConfig) -> None:
     bot.register_callback_query_handler(
         nationality_callback,
         func=lambda call: call.data in ('yes_russian', 'no_russian'),
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        university_callback,
+        func=lambda call: call.data in ('yes_university', 'no_university'),
         pass_bot=True,
     )
 
