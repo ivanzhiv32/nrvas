@@ -15,7 +15,7 @@ def recruitment_callback(call: CallbackQuery, bot: TeleBot) -> None:
         user_id=user_id,
         state=StateRecruitment.type_recruitment,
     )
-    with bot.retrieve_data(call.from_user.id) as data:
+    with bot.retrieve_data(user_id) as data:
         if call.data == 'winter':
             data['type_recruitment'] = 'Зимний'
         else:
