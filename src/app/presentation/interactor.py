@@ -1,7 +1,8 @@
 from abc import abstractmethod, ABC
 from pathlib import Path
 
-from app.application.commands.start import StartCommand
+from app.application.commands.start_command import StartCommand
+from app.application.commands.telegram_command import TelegramCommand
 
 
 class InteractorFactory(ABC):
@@ -11,3 +12,6 @@ class InteractorFactory(ABC):
 
     @abstractmethod
     def start(self) -> StartCommand: ...
+
+    @abstractmethod
+    def telegram(self) -> TelegramCommand: ...

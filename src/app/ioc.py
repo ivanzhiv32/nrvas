@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from app.application.commands.start import StartCommand
+from app.application.commands.start_command import StartCommand
+from app.application.commands.telegram_command import TelegramCommand
 from app.presentation.interactor import InteractorFactory
 
 
@@ -15,3 +16,6 @@ class IoC(InteractorFactory):
 
     def start(self) -> StartCommand:
         return StartCommand(path=self.path, id_admin=self.id_admin)
+
+    def telegram(self) -> TelegramCommand:
+        return TelegramCommand()
