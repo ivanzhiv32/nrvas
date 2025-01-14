@@ -28,19 +28,6 @@ def get_main_keyboard(is_admin: bool) -> ReplyKeyboardMarkup:
     ).add(documents).add(ask_question)
 
 
-def get_type_recruitment_keyboard() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(row_width=2).add(
-        InlineKeyboardButton(
-            'Зимний',
-            callback_data='winter',
-        ),
-        InlineKeyboardButton(
-            'Летний',
-            callback_data='summer',
-        )
-    )
-
-
 def get_nationality_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(row_width=2).add(
         InlineKeyboardButton(
@@ -63,13 +50,5 @@ def get_university_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             'Нет',
             callback_data='no_university'
-        )
-    )
-
-def get_phone_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(resize_keyboard=True, row_width=3).add(
-        KeyboardButton(
-            'Отправить номер',
-            request_contact=True
         )
     )
