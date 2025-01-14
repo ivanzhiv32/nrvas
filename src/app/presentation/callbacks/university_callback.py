@@ -1,7 +1,7 @@
 from telebot import TeleBot
 from telebot.types import CallbackQuery
 
-from app.presentation.handlers.candidate_data_handler import BirthdateHandler
+from app.presentation.handlers import BirthdateHandler
 from app.presentation.interactor import InteractorFactory
 
 
