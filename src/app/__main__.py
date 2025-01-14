@@ -8,18 +8,16 @@ from app.presentation.callbacks import (
     NationalityCallback,
     UniversityCallback,
 )
-from app.presentation.handlers.documents_handler import documents_handler
-from app.presentation.handlers.faq_handler import faq_handler
-from app.presentation.handlers.id_handler import id_handler
-from app.presentation.handlers.question_handler import (
-    incoming_question_handler,
-    question_handler,
+from app.presentation.handlers import (
+    StartHandler,
+    TypeRecruitmentHandler,
+    TelegramChannelHandler,
+    IncomingQuestionHandler,
+    QuestionHandler,
+    FaqHandler,
+    DocumentHandler,
+    IDHandler,
 )
-from app.presentation.handlers.recruitment_handler import (
-    type_recruitment_handler
-)
-from app.presentation.handlers.start_handler import StartHandler
-from app.presentation.handlers.telegram_handler import telegram_channel_handler
 
 
 def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
@@ -50,43 +48,43 @@ def register_handlers(
         pass_bot=True,
     )
     bot.register_message_handler(
-        type_recruitment_handler,
+        TypeRecruitmentHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'Зарегистрироваться',
         pass_bot=True,
     )
     bot.register_message_handler(
-        telegram_channel_handler,
+        TelegramChannelHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'Telegram-канал',
         pass_bot=True,
     )
     bot.register_message_handler(
-        incoming_question_handler,
+        IncomingQuestionHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'Входящие вопросы',
         pass_bot=True,
     )
     bot.register_message_handler(
-        question_handler,
+        QuestionHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'Задать вопрос',
         pass_bot=True,
     )
     bot.register_message_handler(
-        faq_handler,
+        FaqHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'FAQ',
         pass_bot=True,
     )
     bot.register_message_handler(
-        documents_handler,
+        DocumentHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'Руководящие документы',
         pass_bot=True,
     )
     bot.register_message_handler(
-        id_handler,
+        IDHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'id',
         pass_bot=True,
