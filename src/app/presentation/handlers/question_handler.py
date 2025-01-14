@@ -2,7 +2,7 @@ from openpyxl.reader.excel import load_workbook
 from telebot import TeleBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from app.constants import BASE_DIR, QUESTION_TEXT
+from app.constants import BASE_DIR
 from app.utils import excel_to_2d_array
 
 
@@ -43,7 +43,10 @@ def incoming_question_handler(message: Message, bot: TeleBot) -> None:
 def question_handler(message: Message, bot: TeleBot) -> None:
     bot.send_message(message.from_user.id, 'Отправьте интересующий вас вопрос')
     bot.register_next_step_handler(message, add_question_handler)
-    bot.send_message(message.from_user.id, QUESTION_TEXT)
+    bot.send_message(
+        message.from_user.id,
+        'Спасибо за вопрос, он добавлен в базу. В скором времени на него ответят и вам придет уведомление.'
+    )
 
 
 def add_question_handler(message: Message) -> None:
