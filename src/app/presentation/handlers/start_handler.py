@@ -2,16 +2,10 @@ from telebot import TeleBot
 from telebot.types import Message
 
 from app.presentation.buttons import get_main_keyboard
-from app.presentation.interactor import InteractorFactory
+from app.presentation.handlers.base import IHandler
 
 
-class StartHandler:
-    def __init__(
-            self,
-            ioc: InteractorFactory,
-    ) -> None:
-        self.ioc = ioc
-
+class StartHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
         start_command = self.ioc.start()
         chat_id = message.chat.id

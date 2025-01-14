@@ -1,12 +1,25 @@
 from telebot import TeleBot
-from telebot.types import Message
+from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from app.presentation.buttons import get_type_recruitment_keyboard
+from app.presentation.handlers.base import IHandler
 
 
-def type_recruitment_handler(message: Message, bot: TeleBot) -> None:
-    bot.send_message(
-        chat_id=message.chat.id,
-        text='На какой призыв Вы хотите оставить заявку?',
-        reply_markup=get_type_recruitment_keyboard(),
-    )
+class TypeRecruitmentHandler(IHandler):
+    def __call__(self, message: Message, bot: TeleBot) -> None:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text='На какой призыв Вы хотите оставить заявку?',
+            reply_markup=self._get_keyboard(),
+        )
+
+    def _get_keyboard(self) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(row_width=2).add(
+            InlineKeyboardButton(
+                'Зимний',
+                callback_data='winter',
+            ),
+            InlineKeyboardButton(
+                'Летний',
+                callback_data='summer',
+            )
+        )

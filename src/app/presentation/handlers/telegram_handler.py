@@ -1,11 +1,14 @@
 from telebot import TeleBot
 from telebot.types import Message
 
-from app.constants import TELEGRAM_CHANNEL
+from app.presentation.handlers.base import IHandler
 
 
-def telegram_channel_handler(message: Message, bot: TeleBot) -> None:
-    bot.send_message(
-        chat_id=message.chat.id,
-        text=TELEGRAM_CHANNEL,
-    )
+class TelegramChannelHandler(IHandler):
+    def __call__(self, message: Message, bot: TeleBot) -> None:
+        # TODO: добавить базу данных, откуда будет браться телеграмм канал
+        telegram = self.ioc.telegram()
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=telegram.channel,
+        )
