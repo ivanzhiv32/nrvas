@@ -1,10 +1,10 @@
+from pathlib import Path
+
 import pandas as pd
 from openpyxl import load_workbook
 
-from app.constants import BASE_DIR
 
-
-def excel_to_2d_array(name: str) -> pd.DataFrame:
-    wb = load_workbook(BASE_DIR / f'documents/{name}')
+def excel_to_2d_array(path: Path) -> pd.DataFrame:
+    wb = load_workbook(path)
     sheet = wb.active
     return pd.DataFrame(sheet.values)
