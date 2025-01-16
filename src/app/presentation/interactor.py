@@ -8,6 +8,10 @@ from app.application.commands.telegram_command import TelegramCommand
 class InteractorFactory(ABC):
     @property
     @abstractmethod
+    def id_admin(self) -> int: ...
+
+    @property
+    @abstractmethod
     def path(self) -> Path: ...
 
     @abstractmethod
