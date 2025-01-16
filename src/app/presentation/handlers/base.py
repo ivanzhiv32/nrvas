@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from telebot import TeleBot, State
 from telebot.types import Message
@@ -11,7 +12,11 @@ class IHandler(ABC):
         self.ioc = ioc
 
     @abstractmethod
-    def __call__(self, message: Message, bot: TeleBot) -> None: ...
+    def __call__(
+            self,
+            message: Message,
+            bot: TeleBot,
+    ) -> None: ...
 
     def set_state(
             self,
