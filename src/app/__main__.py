@@ -7,6 +7,9 @@ from app.presentation.callbacks import (
     RecruitmentCallback,
     NationalityCallback,
     UniversityCallback,
+    UnseenCallback,
+    PaginateCallback,
+    QuestionCallback,
 )
 from app.presentation.handlers import (
     StartHandler,
@@ -34,6 +37,21 @@ def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
     bot.register_callback_query_handler(
         UniversityCallback(ioc),
         func=lambda call: call.data in ('yes_university', 'no_university'),
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        UnseenCallback(ioc),
+        func=lambda call: call.data == 'unseen',
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        PaginateCallback(ioc),
+        func=lambda call: call.data == 'pagination',
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        QuestionCallback(ioc),
+        func=lambda call: call.data == 'question',
         pass_bot=True,
     )
 
