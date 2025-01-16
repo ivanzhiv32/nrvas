@@ -2,14 +2,12 @@ from telebot import TeleBot
 from telebot.types import CallbackQuery
 
 from app.presentation.buttons import get_university_keyboard
+from app.presentation.callbacks.base import ICallback
 from app.presentation.interactor import InteractorFactory
 from app.state import StateRecruitment
 
 
-class NationalityCallback:
-    def __init__(self, ioc: InteractorFactory) -> None:
-        self.ioc = ioc
-
+class NationalityCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
         chat_id = call.message.chat.id
         if call.data == 'no_russian':

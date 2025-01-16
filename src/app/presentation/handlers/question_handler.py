@@ -12,7 +12,3 @@ class QuestionHandler(IHandler):
             'Отправьте интересующий вас вопрос'
         )
         bot.register_next_step_handler(message, AddingQuestionHandler(self.ioc))
-        bot.send_message(
-            message.from_user.id,
-            'Спасибо за вопрос, он добавлен в базу. В скором времени на него ответят и вам придет уведомление.'
-        )

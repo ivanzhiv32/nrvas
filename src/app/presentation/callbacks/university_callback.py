@@ -1,14 +1,12 @@
 from telebot import TeleBot
 from telebot.types import CallbackQuery
 
+from app.presentation.callbacks.base import ICallback
 from app.presentation.handlers import BirthdateHandler
 from app.presentation.interactor import InteractorFactory
 
 
-class UniversityCallback:
-    def __init__(self, ioc: InteractorFactory) -> None:
-        self.ioc = ioc
-
+class UniversityCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
         if call.data == 'no_university':
             self._invalid_university(call, bot)
