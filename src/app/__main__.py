@@ -8,8 +8,9 @@ from app.presentation.callbacks import (
     NationalityCallback,
     UniversityCallback,
     UnseenCallback,
-    PaginateCallback,
+    FAQCallback,
     QuestionCallback,
+    AnswerFAQCallback,
 )
 from app.presentation.handlers import (
     StartHandler,
@@ -17,9 +18,10 @@ from app.presentation.handlers import (
     TelegramChannelHandler,
     IncomingQuestionHandler,
     QuestionHandler,
-    FaqHandler,
+    FAQHandler,
     DocumentHandler,
     IDHandler,
+    AboutHandler,
 )
 
 
@@ -45,13 +47,18 @@ def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
         pass_bot=True,
     )
     bot.register_callback_query_handler(
-        PaginateCallback(ioc),
-        func=lambda call: call.data == 'pagination',
+        FAQCallback(ioc),
+        func=lambda call: 'faq' in call.data,
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        AnswerFAQCallback(ioc),
+        func=lambda call: 'answerFAQ' in call.data,
         pass_bot=True,
     )
     bot.register_callback_query_handler(
         QuestionCallback(ioc),
-        func=lambda call: call.data == 'question',
+        func=lambda call: 'question' in call.data,
         pass_bot=True,
     )
 
@@ -90,7 +97,7 @@ def register_handlers(
         pass_bot=True,
     )
     bot.register_message_handler(
-        FaqHandler(ioc),
+        FAQHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'FAQ',
         pass_bot=True,
@@ -105,6 +112,12 @@ def register_handlers(
         IDHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'id',
+        pass_bot=True,
+    )
+    bot.register_message_handler(
+        AboutHandler(ioc),
+        content_types=['text'],
+        func=lambda message: message.text == '#О_нас',
         pass_bot=True,
     )
 
