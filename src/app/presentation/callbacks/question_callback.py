@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from telebot import TeleBot
 from telebot.types import (
@@ -13,8 +14,8 @@ from app.utils import excel_to_2d_array
 
 class QuestionCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
-        data = json.loads(call.data.split('_')[0])
-        df = excel_to_2d_array(self.ioc.path / 'questions.xlsx')
+        data = json.loads(call.data)
+        df = excel_to_2d_array(self.ioc.path / 'documents/questions.xlsx')
         page = data['NumberPage']
         question = df[3][page]
         pages = len(df) - 1

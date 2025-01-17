@@ -1,7 +1,7 @@
 from telebot import TeleBot
 from telebot.types import Message
 
-from app.presentation.handlers import MilitaryStationHandler
+from app.presentation.handlers.military_station_handler import MilitaryStationHandler
 from app.presentation.handlers.base import IHandler
 from app.state import StateRecruitment
 

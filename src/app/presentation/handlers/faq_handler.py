@@ -5,50 +5,42 @@ from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from app.presentation.handlers.base import IHandler
 from app.utils import excel_to_2d_array
 
+COUNT_BUTTONS = 4
 
-class FaqHandler(IHandler):
+
+class FAQHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
         # TODO: добавить БД
-        df = excel_to_2d_array(self.ioc.path / 'faq.xlsx')
-        page = 1
-        length = len(df) - 1
-
-        count = length // 4
-        if length % 4 != 0:
-            count += 1
+        df = excel_to_2d_array(self.ioc.path / 'documents/faq.xlsx')
+        length = df.shape[0] - 1
         bot.send_message(
             message.chat.id,
             text=f'<b>Выберите интересующий вас вопрос</b>',
             parse_mode="HTML",
-            reply_markup=self._get_keyboard(df, count, page)
+            reply_markup=self._get_keyboard(df, length)
         )
 
-    def _get_keyboard(self, df: DataFrame, count: int, page: int):
+    def _get_keyboard(self, df: DataFrame, count_page: int):
         markup = InlineKeyboardMarkup()
-        i = 1
-        while i <= 4:
-            question = df[1][i]
+        page = 0
+        for i in range(COUNT_BUTTONS):
             markup.add(
                 InlineKeyboardButton(
-                    text=question,
-                    callback_data=f'{{"method":"question", "index": {i}}}',
+                    text=df[1][i + 1],
+                    callback_data=f'{{"method": "answerFAQ", '
+                                  f'"index": {i + 1}}}',
                 )
             )
-            i += 1
+        count_page = count_page // 4 if count_page % 4 != 0 else count_page + 1
         return markup.add(
             InlineKeyboardButton(
                 text='Скрыть',
-                callback_data='unseen'
-            )
-        ).add(
-            InlineKeyboardButton(
-                text=f'{page}/{count}',
-                callback_data=' '
+                callback_data='unseen',
             ),
             InlineKeyboardButton(
                 text='Вперёд --->',
-                callback_data=f'{{"method": "question", '
+                callback_data=f'{{"method": "faq", '
                               f'"NumberPage": {page + 1}, '
-                              f'"IndexQuestion": {i}}}'
+                              f'"CountPages": {count_page}}}'
             )
         )

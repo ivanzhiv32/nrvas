@@ -12,7 +12,7 @@ class StartCommand:
 
     @property
     def file(self) -> Path:
-        return self._path / 'stickers/hello.webp'
+        return self._path / 'stickers/hello.tgs'
 
     def get_text(self, text: str) -> str:
         return (f'Здравствуйте, {text}\n'

@@ -2,8 +2,8 @@ from telebot import TeleBot
 from telebot.types import Message
 
 from app.exceptions import ScoreException
-from app.presentation.handlers import FindOutHandler
 from app.presentation.handlers.base import IHandler
+from app.presentation.handlers.find_out_handler import FindOutHandler
 from app.state import StateRecruitment
 
 

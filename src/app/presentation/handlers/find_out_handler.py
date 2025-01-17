@@ -1,8 +1,9 @@
 from telebot import TeleBot
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
-from app.presentation.handlers import SendingDocumentHandler
 from app.presentation.handlers.base import IHandler
+from app.presentation.handlers.sending_document_handler import \
+    SendingDocumentHandler
 from app.state import StateRecruitment
 
 

@@ -1,8 +1,8 @@
 from telebot import TeleBot
 from telebot.types import Message
 
-from app.presentation.handlers import NameHandler
 from app.presentation.handlers.base import IHandler
+from app.presentation.handlers.name_handler import NameHandler
 from app.state import StateRecruitment
 
 

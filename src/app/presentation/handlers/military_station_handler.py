@@ -1,7 +1,7 @@
 from telebot import TeleBot
 from telebot.types import Message
 
-from app.presentation.handlers import (
+from app.presentation.handlers.university_handler import (
     UniversityHandler,
 )
 from app.presentation.handlers.base import IHandler
