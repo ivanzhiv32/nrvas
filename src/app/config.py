@@ -8,13 +8,15 @@ from app.constants import BASE_DIR
 class BotConfig:
     token: str
     id_admin: int
+    database: str
 
 
-def load_bot_secret() -> BotConfig:
+def load_config() -> BotConfig:
     with open(BASE_DIR / 'config.toml', 'rb') as file:
         data = tomllib.load(file)
         project_config = data['project']
     return BotConfig(
         token=project_config['token'],
-        id_admin=project_config['id_admin']
+        id_admin=project_config['id_admin'],
+        database=project_config['database']
     )

@@ -1,6 +1,7 @@
 from telebot import TeleBot, StateMemoryStorage
 
-from app.config import load_bot_secret
+from app.adapter.persistence.db import create_session_maker
+from app.config import load_config
 from app.constants import BASE_DIR
 from app.ioc import IoC
 from app.presentation.callbacks import (
@@ -123,14 +124,18 @@ def register_handlers(
 
 
 def main():
-    bot_config = load_bot_secret()
+    bot_config = load_config()
     state_storage = StateMemoryStorage()
     bot = TeleBot(
         token=bot_config.token,
         state_storage=state_storage,
         use_class_middlewares=True,
     )
-    ioc = IoC(path=BASE_DIR, id_admin=bot_config.id_admin)
+    ioc = IoC(
+        path=BASE_DIR,
+        id_admin=bot_config.id_admin,
+        transaction=create_session_maker(bot_config.database)
+    )
 
     register_callbacks(bot, ioc)
     register_handlers(bot, ioc)

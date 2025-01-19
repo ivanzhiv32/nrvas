@@ -1,3 +1,4 @@
 [project]
-token = '<YOUR_TOKEN>'
-id_admin = ID_USER
+token = 'TOKEN'
+id_admin = ID_ADMIN
+database = 'sqlite:///db.db'
