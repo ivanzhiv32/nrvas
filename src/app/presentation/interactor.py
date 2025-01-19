@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 from pathlib import Path
 
+from app.application.commands.faq_command import FAQCommand
 from app.application.commands.start_command import StartCommand
 from app.application.commands.telegram_command import TelegramCommand
 
@@ -19,3 +20,6 @@ class InteractorFactory(ABC):
 
     @abstractmethod
     def telegram(self) -> TelegramCommand: ...
+
+    @abstractmethod
+    def faq_command(self) -> FAQCommand: ...
