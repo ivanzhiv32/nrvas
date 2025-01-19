@@ -1,37 +1,51 @@
-from pandas import DataFrame
 from telebot import TeleBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
+from app.application.commands.faq_command import FAQList
 from app.presentation.handlers.base import IHandler
-from app.utils import excel_to_2d_array
 
-COUNT_BUTTONS = 4
+LIMIT = 4
 
 
 class FAQHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
-        # TODO: добавить БД
-        df = excel_to_2d_array(self.ioc.path / 'documents/faq.xlsx')
-        length = df.shape[0] - 1
-        bot.send_message(
-            message.chat.id,
-            text=f'<b>Выберите интересующий вас вопрос</b>',
-            parse_mode="HTML",
-            reply_markup=self._get_keyboard(df, length)
-        )
+        faq = self.ioc.faq_command()
+        model = faq.get_faq_list(LIMIT, 0)
+        try:
+            bot.send_message(
+                message.chat.id,
+                text=f'<b>Выберите интересующий вас вопрос</b>',
+                parse_mode='HTML',
+                reply_markup=self._get_keyboard(model)
+            )
+        except ValueError:
+            bot.send_message(
+                message.chat.id,
+                text=f'<b>Скоро будут опубликованы часто задаваемые вопросы</b>',
+                parse_mode='HTML',
+            )
 
-    def _get_keyboard(self, df: DataFrame, count_page: int):
+    def _get_keyboard(
+            self,
+            model: FAQList,
+    ) -> InlineKeyboardMarkup:
         markup = InlineKeyboardMarkup()
-        page = 0
-        for i in range(COUNT_BUTTONS):
+        for _, value in enumerate(model.faq):
             markup.add(
                 InlineKeyboardButton(
-                    text=df[1][i + 1],
+                    text=value.question,
                     callback_data=f'{{"method": "answerFAQ", '
-                                  f'"index": {i + 1}}}',
+                                  f'"index": {value.id}}}',
                 )
             )
-        count_page = count_page // 4 if count_page % 4 != 0 else count_page + 1
+        if model.total < LIMIT:
+            return markup.add(
+                InlineKeyboardButton(
+                    text='Скрыть',
+                    callback_data='unseen',
+                ),
+            )
+        offset = model.offset + 1
         return markup.add(
             InlineKeyboardButton(
                 text='Скрыть',
@@ -40,7 +54,6 @@ class FAQHandler(IHandler):
             InlineKeyboardButton(
                 text='Вперёд --->',
                 callback_data=f'{{"method": "faq", '
-                              f'"NumberPage": {page + 1}, '
-                              f'"CountPages": {count_page}}}'
+                              f'"NumberPage": {offset}}}'
             )
         )

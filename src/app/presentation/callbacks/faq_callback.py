@@ -1,7 +1,6 @@
 import json
 from typing import Any
 
-from pandas import DataFrame
 from telebot import TeleBot
 from telebot.types import (
     CallbackQuery,
@@ -9,63 +8,59 @@ from telebot.types import (
     InlineKeyboardButton,
 )
 
+from app.application.commands.faq_command import FAQList
 from app.presentation.callbacks.base import ICallback
-from app.utils import excel_to_2d_array
 
-COUNT_BUTTONS = 4
+LIMIT = 4
 
 
 class FAQCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
         data = json.loads(call.data)
-        df = excel_to_2d_array(self.ioc.path / 'documents/faq.xlsx')
+        faq = self.ioc.faq_command()
+        offset = data['NumberPage']
+        model = faq.get_faq_list(LIMIT, offset)
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             text='<b>Выберите интересующий вас вопрос:</b>',
             parse_mode='HTML',
-            reply_markup=self._add_keyboard(df, data),
+            reply_markup=self._add_keyboard(model, data),
             message_id=call.message.message_id,
         )
 
     def _add_keyboard(
             self,
-            df: DataFrame,
-            data: dict[str, Any]
+            model: FAQList,
+            data: dict[str, Any],
     ) -> InlineKeyboardMarkup:
         markup = InlineKeyboardMarkup()
-        page = data['NumberPage']
-        count_page = data['CountPages']
-        for i in range(COUNT_BUTTONS):
-            index = count_page * page + 1 + i
-            if index == df[1].count():
-                break
+        for _, value in enumerate(model.faq):
             markup.add(
                 InlineKeyboardButton(
-                    text=df[1][index],
+                    text=value.question,
                     callback_data=f'{{"method": "answerFAQ", '
-                                  f'"index": {index}}}',
+                                  f'"index": {value.id}}}',
                 )
             )
-        if page == count_page:
+        offset = data['NumberPage']
+        if len(model.faq) < model.limit or model.faq == 0:
             return markup.add(
                 InlineKeyboardButton(
                     text='<--- Назад',
                     callback_data=f'{{"method": "faq", '
-                                  f'"NumberPage": {page - 1}, '
-                                  f'"CountPages": {count_page}}}',
+                                  f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
                     text='Скрыть',
                     callback_data='unseen',
                 )
             )
-        if page >= 1:
+        elif offset > 0:
             return markup.add(
                 InlineKeyboardButton(
                     text='<--- Назад',
                     callback_data=f'{{"method": "faq", '
-                                  f'"NumberPage": {page - 1}, '
-                                  f'"CountPages": {count_page}}}',
+                                  f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
                     text='Скрыть',
@@ -74,8 +69,7 @@ class FAQCallback(ICallback):
                 InlineKeyboardButton(
                     text='Вперёд --->',
                     callback_data=f'{{"method": "faq", '
-                                  f'"NumberPage": {page + 1}, '
-                                  f'"CountPages": {count_page}}}'
+                                  f'"NumberPage": {offset + 1}}}'
                 )
             )
         return markup.add(
@@ -86,18 +80,17 @@ class FAQCallback(ICallback):
             InlineKeyboardButton(
                 text='Вперёд --->',
                 callback_data=f'{{"method": "faq", '
-                              f'"NumberPage": {page + 1}, '
-                              f'"CountPages": {count_page}}}'
+                              f'"NumberPage": {offset + 1}}}'
             )
         )
 
 
 class AnswerFAQCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
+        faq = self.ioc.faq_command()
         data = json.loads(call.data)
-        df = excel_to_2d_array(self.ioc.path / 'documents/faq.xlsx')
-        index = data['index']
+        model = faq.get_faq(data['index'])
         bot.send_message(
             chat_id=call.message.chat.id,
-            text=df[2][index]
+            text=model.answer,
         )
