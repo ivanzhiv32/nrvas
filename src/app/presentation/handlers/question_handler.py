@@ -11,4 +11,4 @@ class QuestionHandler(IHandler):
             message.from_user.id,
             'Отправьте интересующий вас вопрос'
         )
-        bot.register_next_step_handler(message, AddingQuestionHandler(self.ioc))
+        self.next_handler(message, bot, AddingQuestionHandler(self.ioc))
