@@ -2,8 +2,9 @@ from telebot import TeleBot
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
 from app.presentation.handlers.base import IHandler
-from app.presentation.handlers.sending_document_handler import \
+from app.presentation.handlers.sending_document_handler import (
     SendingDocumentHandler
+)
 from app.state import StateRecruitment
 
 
@@ -12,7 +13,7 @@ class FindOutHandler(IHandler):
         self.set_state(
             message,
             bot,
-            'phone',
+            'find_out',
             message.text,
             StateRecruitment.find_out
         )
@@ -27,7 +28,11 @@ class FindOutHandler(IHandler):
         bot.delete_message(chat_id=message.chat.id, message_id=message.id - 1)
 
     def _get_keyboard(self) -> ReplyKeyboardMarkup:
-        return ReplyKeyboardMarkup(resize_keyboard=True, row_width=3).add(
+        return ReplyKeyboardMarkup(
+            resize_keyboard=True,
+            row_width=3,
+            one_time_keyboard=False
+        ).add(
             KeyboardButton(
                 'Отправить номер',
                 request_contact=True

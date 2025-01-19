@@ -5,7 +5,11 @@ from telebot.types import (
 
 
 def get_main_keyboard(is_admin: bool) -> ReplyKeyboardMarkup:
-    markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+    markup = ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        row_width=3,
+        one_time_keyboard=False,
+    )
 
     about = KeyboardButton('#О_нас')
     faq = KeyboardButton('FAQ')
