@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-class StartCommand:
+class StartUseCase:
     def __init__(self, path: Path, id_admin: int) -> None:
         self._path = path
         self._id_admin = id_admin

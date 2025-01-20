@@ -8,7 +8,7 @@ from telebot.types import (
     InlineKeyboardButton,
 )
 
-from app.application.commands.faq_command import FAQList
+from app.application.usecase.faq import FAQList
 from app.presentation.callbacks.base import ICallback
 
 LIMIT = 4
@@ -17,9 +17,9 @@ LIMIT = 4
 class FAQCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
         data = json.loads(call.data)
-        faq = self.ioc.faq_command()
+        usecase = self.ioc.faq_usecase()
         offset = data['NumberPage']
-        model = faq.get_faq_list(LIMIT, offset)
+        model = usecase.get_faq_list(LIMIT, offset)
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             text='<b>Выберите интересующий вас вопрос:</b>',
@@ -87,7 +87,7 @@ class FAQCallback(ICallback):
 
 class AnswerFAQCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
-        faq = self.ioc.faq_command()
+        faq = self.ioc.faq_usecase()
         data = json.loads(call.data)
         model = faq.get_faq(data['index'])
         bot.send_message(

@@ -1,4 +1,3 @@
-import uuid
 from dataclasses import dataclass
 
 from app.application.interface.gateway.faq import IFAQGateway
@@ -14,7 +13,7 @@ class FAQList:
     faq: list[FAQ]
 
 
-class FAQCommand:
+class FAQUseCase:
     def __init__(
             self,
             gateway: IFAQGateway,

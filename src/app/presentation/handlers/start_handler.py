@@ -7,7 +7,7 @@ from app.presentation.handlers.base import IHandler
 
 class StartHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
-        start_command = self.ioc.start()
+        start_command = self.ioc.start_usecase()
         chat_id = message.chat.id
         with open(start_command.file, 'rb') as file:
             bot.send_sticker(chat_id, file)

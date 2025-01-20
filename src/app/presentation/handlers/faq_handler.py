@@ -1,7 +1,7 @@
 from telebot import TeleBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from app.application.commands.faq_command import FAQList
+from app.application.usecase.faq import FAQList
 from app.presentation.handlers.base import IHandler
 
 LIMIT = 4
@@ -9,8 +9,8 @@ LIMIT = 4
 
 class FAQHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
-        faq = self.ioc.faq_command()
-        model = faq.get_faq_list(LIMIT, 0)
+        usecase = self.ioc.faq_usecase()
+        model = usecase.get_faq_list(LIMIT, 0)
         try:
             bot.send_message(
                 message.chat.id,
