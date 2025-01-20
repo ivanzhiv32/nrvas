@@ -1,13 +1,13 @@
-import uuid
 from collections.abc import Iterator
 
 from sqlalchemy import select, func
 
 from app.adapter.db.models.faq import FAQStorage
+from app.domain.faq import FAQ
 from .base import BaseGateway
 
 
-class FAQGateway[FAQ](BaseGateway):
+class FAQGateway(BaseGateway[FAQ]):
     def get_all(self, limit: int, offset: int) -> Iterator[FAQ]:
         stmt = select(FAQStorage).limit(limit).offset(offset)
         result = self.session.execute(stmt)
