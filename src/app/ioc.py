@@ -1,12 +1,15 @@
-from collections.abc import Callable, Iterator
+from collections.abc import Iterator
 from pathlib import Path
 
 from sqlalchemy.orm import Session
 
+from app.adapter.db.gateway.candidate import CandidateGateway
 from app.adapter.db.gateway.faq import FAQGateway
-from app.application.commands.faq_command import FAQCommand
-from app.application.commands.start_command import StartCommand
-from app.application.commands.telegram_command import TelegramCommand
+from app.adapter.persistence.db import create_session_maker, get_session
+from app.application.usecase.candidate import CandidateUseCase
+from app.application.usecase.faq import FAQUseCase
+from app.application.usecase.start import StartUseCase
+from app.application.usecase.telegram import TelegramUseCase
 from app.presentation.interactor import InteractorFactory
 
 
@@ -15,16 +18,16 @@ class IoC(InteractorFactory):
             self,
             path: Path,
             id_admin,
-            transaction: Callable[[], Iterator[Session]]
+            db_url: str
     ) -> None:
         self._path = path
         self._id_admin = id_admin
-        self._transaction = transaction
+        self._db_url = db_url
 
     @property
-    def session(self) -> Session:
-        for session in self._transaction():
-            return session
+    def session(self) -> Iterator[Session]:
+        session_maker = create_session_maker(self._db_url)
+        return get_session(session_maker)
 
     @property
     def id_admin(self) -> int:
@@ -34,13 +37,21 @@ class IoC(InteractorFactory):
     def path(self) -> Path:
         return self._path
 
-    def faq_command(self) -> FAQCommand:
-        session = self.session
-        gateway = FAQGateway(session)
-        return FAQCommand(gateway, session)
+    def faq_usecase(self) -> FAQUseCase:
+        for session in self.session:
+            gateway = FAQGateway(session)
+            return FAQUseCase(gateway, session)
 
-    def start(self) -> StartCommand:
-        return StartCommand(path=self.path, id_admin=self.id_admin)
+    def start_usecase(self) -> StartUseCase:
+        return StartUseCase(path=self.path, id_admin=self.id_admin)
 
-    def telegram(self) -> TelegramCommand:
-        return TelegramCommand()
+    def telegram_usecase(self) -> TelegramUseCase:
+        return TelegramUseCase()
+
+    def candidate_usecase(self) -> CandidateUseCase:
+        for session in self.session:
+            gateway = CandidateGateway(session)
+            return CandidateUseCase(
+                gateway=gateway,
+                transaction=session
+            )

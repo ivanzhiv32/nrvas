@@ -1,9 +1,10 @@
 from abc import abstractmethod, ABC
 from pathlib import Path
 
-from app.application.commands.faq_command import FAQCommand
-from app.application.commands.start_command import StartCommand
-from app.application.commands.telegram_command import TelegramCommand
+from app.application.usecase.candidate import CandidateUseCase
+from app.application.usecase.faq import FAQUseCase
+from app.application.usecase.start import StartUseCase
+from app.application.usecase.telegram import TelegramUseCase
 
 
 class InteractorFactory(ABC):
@@ -16,10 +17,13 @@ class InteractorFactory(ABC):
     def path(self) -> Path: ...
 
     @abstractmethod
-    def start(self) -> StartCommand: ...
+    def start_usecase(self) -> StartUseCase: ...
 
     @abstractmethod
-    def telegram(self) -> TelegramCommand: ...
+    def telegram_usecase(self) -> TelegramUseCase: ...
 
     @abstractmethod
-    def faq_command(self) -> FAQCommand: ...
+    def faq_usecase(self) -> FAQUseCase: ...
+
+    @abstractmethod
+    def candidate_usecase(self) -> CandidateUseCase: ...

@@ -134,7 +134,7 @@ def main():
     ioc = IoC(
         path=BASE_DIR,
         id_admin=bot_config.id_admin,
-        transaction=create_session_maker(bot_config.database)
+        db_url=bot_config.database,
     )
 
     register_callbacks(bot, ioc)
