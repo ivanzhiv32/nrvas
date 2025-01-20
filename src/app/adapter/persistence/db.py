@@ -1,24 +1,23 @@
-from collections.abc import Iterator, Callable
+from collections.abc import Iterator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 
-def create_session_maker(db_url: str) -> Callable[[], Iterator[Session]]:
+def create_session_maker(db_url: str) -> sessionmaker:
     engine = create_engine(
         db_url,
         echo=False,
         pool_size=15,
         max_overflow=15,
     )
-    session_maker = sessionmaker(
+    return sessionmaker(
         engine,
         autoflush=False,
         expire_on_commit=False
     )
 
-    def transaction() -> Iterator[Session]:
-        with session_maker() as session:
-            yield session
 
-    return transaction
+def get_session(session_maker: sessionmaker) -> Iterator[Session]:
+    with session_maker() as session:
+        yield session
