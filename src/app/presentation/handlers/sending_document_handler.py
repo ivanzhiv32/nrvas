@@ -27,6 +27,7 @@ class SendingDocumentHandler(IHandler):
             return
         user_id = message.from_user.id
 
+        usecase = self.ioc.candidate_usecase()
         with bot.retrieve_data(user_id) as data:
             candidate = Candidate(
                 user_id=user_id,
@@ -50,7 +51,7 @@ class SendingDocumentHandler(IHandler):
             reply_markup=get_main_keyboard(user_id == self.ioc.id_admin)
         )
         self._send_documents(message, bot)
-        self._add_to_excel(candidate)
+        usecase.add_candidate(candidate)
 
     def _send_documents(self, message: Message, bot: TeleBot) -> None:
         # TODO: необходима БД
