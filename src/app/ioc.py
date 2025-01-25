@@ -3,11 +3,15 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
+from app.adapter.db.gateway.answer import AnswerGateway
 from app.adapter.db.gateway.candidate import CandidateGateway
 from app.adapter.db.gateway.faq import FAQGateway
+from app.adapter.db.gateway.question import QuestionGateway
 from app.adapter.persistence.db import create_session_maker, get_session
+from app.application.usecase.answer import AnswerUseCase
 from app.application.usecase.candidate import CandidateUseCase
 from app.application.usecase.faq import FAQUseCase
+from app.application.usecase.question import QuestionUseCase
 from app.application.usecase.start import StartUseCase
 from app.application.usecase.telegram import TelegramUseCase
 from app.presentation.interactor import InteractorFactory
@@ -54,4 +58,22 @@ class IoC(InteractorFactory):
             return CandidateUseCase(
                 gateway=gateway,
                 transaction=session
+            )
+
+    def answer_usecase(self) -> AnswerUseCase:
+        for session in self.session:
+            answer_gateway = AnswerGateway(session)
+            question_gateway = QuestionGateway(session)
+            return AnswerUseCase(
+                answer_gateway=answer_gateway,
+                question_gateway=question_gateway,
+                transaction=session
+            )
+
+    def question_usecase(self) -> QuestionUseCase:
+        for session in self.session:
+            question_gateway = QuestionGateway(session)
+            return QuestionUseCase(
+                question_gateway=question_gateway,
+                transaction=session,
             )
