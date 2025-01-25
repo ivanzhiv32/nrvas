@@ -1,6 +1,5 @@
 from telebot import TeleBot, StateMemoryStorage
 
-from app.adapter.persistence.db import create_session_maker
 from app.config import load_config
 from app.constants import BASE_DIR
 from app.ioc import IoC
@@ -10,19 +9,18 @@ from app.presentation.callbacks import (
     UniversityCallback,
     UnseenCallback,
     FAQCallback,
-    QuestionCallback,
     AnswerFAQCallback,
+    AnswerCallback, QuestionsCallback,
 )
 from app.presentation.handlers import (
     StartHandler,
     TypeRecruitmentHandler,
     TelegramChannelHandler,
-    IncomingQuestionHandler,
     QuestionHandler,
     FAQHandler,
     DocumentHandler,
     IDHandler,
-    AboutHandler,
+    AboutHandler, IncomingQuestionHandler,
 )
 
 
@@ -58,8 +56,13 @@ def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
         pass_bot=True,
     )
     bot.register_callback_query_handler(
-        QuestionCallback(ioc),
-        func=lambda call: 'question' in call.data,
+        AnswerCallback(ioc),
+        func=lambda call: 'answer' in call.data,
+        pass_bot=True
+    )
+    bot.register_callback_query_handler(
+        QuestionsCallback(ioc),
+        func=lambda call: 'questions' in call.data,
         pass_bot=True,
     )
 
