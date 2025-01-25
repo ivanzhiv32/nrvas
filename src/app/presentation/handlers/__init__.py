@@ -1,3 +1,4 @@
+from .about_handler import AboutHandler
 from .adding_question_handler import AddingQuestionHandler
 from .average_score_handler import AverageScoreHandler
 from .birthdate_handler import BirthdateHandler
@@ -15,7 +16,6 @@ from .start_handler import StartHandler
 from .surname_handler import SurnameHandler
 from .telegram_handler import TelegramChannelHandler
 from .university_handler import UniversityHandler
-from .about_handler import AboutHandler
 
 __all__ = (
     'AddingQuestionHandler',
@@ -25,7 +25,7 @@ __all__ = (
     'FAQHandler',
     'FieldStudyHandler',
     'IDHandler',
-    'IncomingQuestionHandler',
+    'QuestionHandler',
     'MilitaryStationHandler',
     'PatronymicHandler',
     'QuestionHandler',
@@ -34,5 +34,6 @@ __all__ = (
     'SurnameHandler',
     'TelegramChannelHandler',
     'UniversityHandler',
-    'AboutHandler'
+    'AboutHandler',
+    'IncomingQuestionHandler',
 )
