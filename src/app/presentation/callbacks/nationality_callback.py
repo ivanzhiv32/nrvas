@@ -1,9 +1,11 @@
 from telebot import TeleBot
-from telebot.types import CallbackQuery
+from telebot.types import (
+    CallbackQuery,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
 
-from app.presentation.buttons import get_university_keyboard
 from app.presentation.callbacks.base import ICallback
-from app.presentation.interactor import InteractorFactory
 from app.state import StateRecruitment
 
 
@@ -18,7 +20,7 @@ class NationalityCallback(ICallback):
             chat_id=chat_id,
             message_id=call.message.message_id,
             text='Имеется ли у Вас оконченное высшее техническое образование?',
-            reply_markup=get_university_keyboard(),
+            reply_markup=self._add_keyboard(),
         )
 
     def _invalid_nationality(self, call: CallbackQuery, bot: TeleBot) -> None:
@@ -42,3 +44,15 @@ class NationalityCallback(ICallback):
         )
         with bot.retrieve_data(user_id) as data:
             data['nationality'] = 'Да' if call.data == 'yes_russian' else 'Нет'
+
+    def _add_keyboard(self) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(row_width=2).add(
+            InlineKeyboardButton(
+                'Да',
+                callback_data='yes_university'
+            ),
+            InlineKeyboardButton(
+                'Нет',
+                callback_data='no_university'
+            )
+        )

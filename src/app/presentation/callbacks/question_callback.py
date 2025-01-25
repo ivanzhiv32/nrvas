@@ -4,74 +4,81 @@ from typing import Any
 from telebot import TeleBot
 from telebot.types import (
     CallbackQuery,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
+    InlineKeyboardMarkup, InlineKeyboardButton,
 )
 
+from app.application.usecase.question import QuestionList
 from app.presentation.callbacks.base import ICallback
-from app.utils import excel_to_2d_array
+
+LIMIT = 5
 
 
-class QuestionCallback(ICallback):
+class QuestionsCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
         data = json.loads(call.data)
-        df = excel_to_2d_array(self.ioc.path / 'documents/questions.xlsx')
-        page = data['NumberPage']
-        question = df[3][page]
-        pages = len(df) - 1
+        usecase = self.ioc.question_usecase()
+        offset = data['NumberPage']
+        model = usecase.get_questions(LIMIT, offset)
         bot.edit_message_text(
-            text=question,
-            parse_mode='HTML',
-            reply_markup=self._get_keyboard(page, pages),
             chat_id=call.message.chat.id,
+            text='<b>Пользователи задали следующие вопросы</b>',
+            parse_mode='HTML',
+            reply_markup=self._get_keyboard(model, data),
             message_id=call.message.message_id,
         )
 
-    def _get_keyboard(self, page: int, pages: int) -> InlineKeyboardMarkup:
+    def _get_keyboard(
+            self,
+            model: QuestionList,
+            data: dict[str, Any]
+    ) -> InlineKeyboardMarkup:
         markup = InlineKeyboardMarkup()
-        markup.add(
-            InlineKeyboardButton(
-                text='Ответить',
-                callback_data=f'{{"method":"answer","NumberPage":"{page}"}}'
-            )
-        )
-        if page == 1:
-            return markup.add(
+        for _, value in enumerate(model.questions):
+            markup.add(
                 InlineKeyboardButton(
-                    text=f'{page}/{pages}',
-                    callback_data='  '
-                ),
-                InlineKeyboardButton(
-                    text='Вперёд --->',
-                    callback_data=f'{{"method":"question","NumberPage":"{page + 1}"'
-                                  f',"IndexQuestion":"{page}"}}'
+                    text=value.question,
+                    callback_data=f'{{"method": "answer", '
+                                  f'"index": {value.id}}}',
                 )
             )
-        elif page == pages:
+        offset = data['NumberPage']
+        if len(model.questions) < model.limit or model.questions == 0:
             return markup.add(
                 InlineKeyboardButton(
                     text='<--- Назад',
-                    callback_data=f'{{"method":"question","NumberPage":"{page - 1}"'
-                                  f',"IndexQuestion":"{page - 1}"}}'
+                    callback_data=f'{{"method": "questions", '
+                                  f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
-                    text=f'{page}/{pages}',
-                    callback_data=' '
+                    text='Скрыть',
+                    callback_data='unseen',
+                )
+            )
+        elif offset > 0:
+            return markup.add(
+                InlineKeyboardButton(
+                    text='<--- Назад',
+                    callback_data=f'{{"method": "questions", '
+                                  f'"NumberPage": {offset - 1}}}'
+                ),
+                InlineKeyboardButton(
+                    text='Скрыть',
+                    callback_data='unseen',
+                ),
+                InlineKeyboardButton(
+                    text='Вперёд --->',
+                    callback_data=f'{{"method": "questions", '
+                                  f'"NumberPage": {offset + 1}}}'
                 )
             )
         return markup.add(
             InlineKeyboardButton(
-                text='<--- Назад',
-                callback_data=f'{{"method":"question","NumberPage":"{page - 1}",'
-                              f'"IndexQuestion":"{page + -1}"}}'
-            ),
-            InlineKeyboardButton(
-                text=f'{page}/{pages}',
-                callback_data=' '
+                text='Скрыть',
+                callback_data='unseen',
             ),
             InlineKeyboardButton(
                 text='Вперёд --->',
-                callback_data=f'{{"method":"question","NumberPage":"{page + 1}",'
-                              f'"IndexQuestion":"{page + 1}"}}'
+                callback_data=f'{{"method": "questions", '
+                              f'"NumberPage": {offset + 1}}}'
             )
         )

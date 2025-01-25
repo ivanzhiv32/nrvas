@@ -87,9 +87,9 @@ class FAQCallback(ICallback):
 
 class AnswerFAQCallback(ICallback):
     def __call__(self, call: CallbackQuery, bot: TeleBot) -> None:
-        faq = self.ioc.faq_usecase()
+        usecase = self.ioc.faq_usecase()
         data = json.loads(call.data)
-        model = faq.get_faq(data['index'])
+        model = usecase.get_faq(data['index'])
         bot.send_message(
             chat_id=call.message.chat.id,
             text=model.answer,

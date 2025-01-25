@@ -14,14 +14,14 @@ class FAQHandler(IHandler):
         try:
             bot.send_message(
                 message.chat.id,
-                text=f'<b>Выберите интересующий вас вопрос</b>',
+                text='<b>Выберите интересующий вас вопрос</b>',
                 parse_mode='HTML',
                 reply_markup=self._get_keyboard(model)
             )
         except ValueError:
             bot.send_message(
                 message.chat.id,
-                text=f'<b>Скоро будут опубликованы часто задаваемые вопросы</b>',
+                text='<b>Скоро будут опубликованы часто задаваемые вопросы</b>',
                 parse_mode='HTML',
             )
 

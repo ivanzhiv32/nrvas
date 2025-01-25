@@ -1,7 +1,7 @@
-from openpyxl.reader.excel import load_workbook
 from telebot import TeleBot
 from telebot.types import Message
 
+from app.domain.question import Question
 from app.presentation.handlers.base import IHandler
 
 
@@ -15,15 +15,13 @@ class AddingQuestionHandler(IHandler):
         self._add_question(message.from_user.id, message.text)
         bot.send_message(
             self.ioc.id_admin,
-            'Пользователь задал вопрос'
+            f'Пользователь (@{message.from_user.username}) задал вопрос'
         )
 
     def _add_question(self, user_id: int, question: str) -> None:
-        # TODO: добавить БД
-        filename = 'documents/questions.xlsx'
-        wb = load_workbook(self.ioc.path / filename)
-        sheet = wb.active
-        count = sheet.max_row
-        data = (count, user_id, False, question)
-        sheet.append(data)
-        wb.save(self.ioc.path / filename)
+        question = Question(
+            user_id=str(user_id),
+            question=question,
+        )
+        usecase = self.ioc.question_usecase()
+        usecase.add_question(question)

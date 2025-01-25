@@ -22,3 +22,17 @@ class AnswerHandler(IHandler):
             message.from_user.id,
             'Ответ на данный вопрос отправлен пользователю'
         )
+
+
+class AnswerToQuestionHandler(IHandler):
+    def __init__(self, ioc: InteractorFactory, question_id: int) -> None:
+        super().__init__(ioc)
+        self._question_id = question_id
+
+    def __call__(self, message: Message, bot: TeleBot) -> None:
+        usecase = self.ioc.answer_usecase()
+        usecase.add_answer(self._question_id, message.text)
+        bot.send_message(
+            message.from_user.id,
+            'Ответ добавлен в базу данных'
+        )
