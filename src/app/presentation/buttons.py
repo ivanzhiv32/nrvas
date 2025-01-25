@@ -1,6 +1,6 @@
 from telebot.types import (
     ReplyKeyboardMarkup,
-    KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton,
+    KeyboardButton,
 )
 
 
@@ -10,7 +10,6 @@ def get_main_keyboard(is_admin: bool) -> ReplyKeyboardMarkup:
         row_width=3,
         one_time_keyboard=False,
     )
-
     about = KeyboardButton('#О_нас')
     faq = KeyboardButton('FAQ')
     telegram_channel = KeyboardButton('Telegram-канал')
@@ -30,29 +29,3 @@ def get_main_keyboard(is_admin: bool) -> ReplyKeyboardMarkup:
         telegram_channel,
         about,
     ).add(documents).add(ask_question)
-
-
-def get_nationality_keyboard() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(row_width=2).add(
-        InlineKeyboardButton(
-            'Да',
-            callback_data='yes_russian'
-        ),
-        InlineKeyboardButton(
-            'Нет',
-            callback_data='no_russian'
-        )
-    )
-
-
-def get_university_keyboard() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(row_width=2).add(
-        InlineKeyboardButton(
-            'Да',
-            callback_data='yes_university'
-        ),
-        InlineKeyboardButton(
-            'Нет',
-            callback_data='no_university'
-        )
-    )
