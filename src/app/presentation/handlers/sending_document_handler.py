@@ -15,7 +15,7 @@ class SendingDocumentHandler(IHandler):
             bot.send_message(
                 message.chat.id,
                 parse_mode='HTML',
-                text='Для связи с вами, нам необходимо получить ваш номер телефона. '
+                text='Для связи с Вами, нам необходимо получить Ваш номер телефона. '
                      'Нажмите кнопку в меню или напишите его в чат',
                 reply_markup=self._get_keyboard()
             )
@@ -46,15 +46,14 @@ class SendingDocumentHandler(IHandler):
             )
         bot.send_message(
             message.from_user.id,
-            'Поздравляем, ваша кандидатура будет рассмотрена для поступления '
-            'в научную роту Военной академеии связи им С.М. Буденного',
+            'Поздравляем, Ваша кандидатура будет рассмотрена для поступления '
+            'в научную роту Военной академии связи им С.М. Буденного',
             reply_markup=get_main_keyboard(user_id == self.ioc.id_admin)
         )
         self._send_documents(message, bot)
         usecase.add_candidate(candidate)
 
     def _send_documents(self, message: Message, bot: TeleBot) -> None:
-        # TODO: необходима БД
         chat_id = message.chat.id
         path = self.ioc.path
         with open(path / r'documents/Лист собеседования.docx', 'rb') as file:

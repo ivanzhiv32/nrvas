@@ -10,7 +10,7 @@ class AddingQuestionHandler(IHandler):
         bot.send_message(
             message.from_user.id,
             'Спасибо за вопрос, он добавлен в базу. '
-            'В скором времени на него ответят и вам придет уведомление.'
+            'В скором времени на него ответят и Вам придет уведомление.'
         )
         self._add_question(message.from_user.id, message.text)
         bot.send_message(

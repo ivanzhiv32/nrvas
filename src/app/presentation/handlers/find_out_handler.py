@@ -20,7 +20,7 @@ class FindOutHandler(IHandler):
         bot.send_message(
             message.chat.id,
             parse_mode='HTML',
-            text='Для связи с вами, нам необходимо получить ваш номер телефона. '
+            text='Для связи с Вами, нам необходимо получить Ваш номер телефона. '
                  'Нажмите кнопку в меню или напишите его в чат',
             reply_markup=self._get_keyboard()
         )

@@ -22,7 +22,7 @@ class FAQCallback(ICallback):
         model = usecase.get_faq_list(LIMIT, offset)
         bot.edit_message_text(
             chat_id=call.message.chat.id,
-            text='<b>Выберите интересующий вас вопрос:</b>',
+            text='<b>Выберите интересующий Вас вопрос:</b>',
             parse_mode='HTML',
             reply_markup=self._add_keyboard(model, data),
             message_id=call.message.message_id,

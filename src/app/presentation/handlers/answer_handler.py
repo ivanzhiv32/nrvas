@@ -15,7 +15,7 @@ class AnswerHandler(IHandler):
             message: Message,
             bot: TeleBot,
     ) -> None:
-        text = (f'<b>Офицер научной роты ответил на ваш '
+        text = (f'<b>Представитель научной роты ответил на Ваш '
                 f'вопрос.</b>\n{self.question}\n{message.text}')
         bot.send_message(self.ioc.id_admin, text, parse_mode='HTML')
         bot.send_message(

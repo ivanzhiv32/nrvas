@@ -8,6 +8,6 @@ class AboutHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
         bot.send_message(
             message.chat.id,
-            text='<b>Данная кнопка находится в разработке</b>',
+            text='<b>Данная функция находится в стадии разработки</b>',
             parse_mode='HTML'
         )
