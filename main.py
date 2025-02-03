@@ -5,13 +5,14 @@ import telebot.types
 from datetime import datetime
 
 from telebot import types
+from telebot.types import ReplyKeyboardRemove
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from time import sleep
 
 # https://api.telegram.org/bot7541371307:AAHfbOo47fs-eSGfVN63CeCg_bUvMKRaIRI/getUpdates
-TOKEN = '7541371307:AAHfbOo47fs-eSGfVN63CeCg_bUvMKRaIRI7541371307:AAHfbOo47fs-eSGfVN63CeCg_bUvMKRaIRI'
+TOKEN = '7541371307:AAHfbOo47fs-eSGfVN63CeCg_bUvMKRaIRI'
 bot = telebot.TeleBot(TOKEN)
 
 time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
@@ -28,7 +29,6 @@ class Candidate:
     university = ''
     field_study = ''
     average_score = ''
-    source = ''
     status = ''
     type_recruitment = ''
     find_out = ''
@@ -39,7 +39,8 @@ class Candidate:
         sheet = wb.active
         rows_count = sheet.max_row
         data = (rows_count, self.surname, self.name, self.patronymic, self.date_birth,
-                self.mil_station, self.university, self.field_study, self.average_score,)
+                self.mil_station, self.university, self.field_study, self.average_score,
+                self.status, self.type_recruitment, self.find_out, self.phone_number)
         sheet.append(data)
 
         wb.save(filename='documents/candidate.xlsx')
@@ -90,9 +91,12 @@ def go_to_main_menu(message, msg):
 @bot.message_handler(content_types=["text"])
 def welcome(message):
     if message.text == 'Зарегистрироваться':
+        bot.send_message(message.chat.id, 'Для прохождения регистрации заполните следующую информацию:', reply_markup=ReplyKeyboardRemove())
         type_recruitment(message)
     elif message.text == 'Telegram-канал':
         bot.send_message(message.chat.id, "https://t.me/+ntFED2PMwUo2MDZi")
+    elif message.text == '#О_нас':
+        bot.send_message(message.chat.id, "Данная функция находится в стадии разработки")
     elif message.text == 'Входящие вопросы':
         df = excel_to_2d_array('questions.xlsx')
         page = 1
@@ -123,14 +127,14 @@ def welcome(message):
             question = df[1][i]
             answer = df[2][i]
             markup.add(
-                InlineKeyboardButton(text=question, callback_data='{\"method\":\"question\",\"index\":' + str(i) + '}'))
+                InlineKeyboardButton(text=question, callback_data='{\"method\":\"faq\",\"index\":' + str(i) + '}'))
             i += 1
         markup.add(InlineKeyboardButton(text='Скрыть', callback_data='unseen'))
         markup.add(InlineKeyboardButton(text=f'{page}/{count_pages}', callback_data=f' '),
                    InlineKeyboardButton(text=f'Вперёд --->',
-                                        callback_data="{\"method\":\"question\",\"NumberPage\":" + str(
+                                        callback_data="{\"method\":\"pagination\",\"NumberPage\":" + str(
                                             page + 1) + ",\"IndexQuestion\":" + str(i) + "}"))
-        bot.send_message(message.chat.id, text=f'<b>Выберите интересующий вас вопрос</b>', parse_mode="HTML",
+        bot.send_message(message.chat.id, text=f'<b>Выберите интересующий Вас вопрос</b>', parse_mode="HTML",
                          reply_markup=markup)
 
     elif message.text == 'Руководящие документы':
@@ -142,7 +146,8 @@ def welcome(message):
                          text='ФЗ № 53 «О воинской обязанности и военной службе» от 28.03.1998 (ред. 02.10.2024)',
                          reply_markup=markup)
     elif message.text == 'Задать вопрос':
-        bot.send_message(message.from_user.id, 'Отправьте интересующий вас вопрос')
+        # kb_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        bot.send_message(message.from_user.id, 'Отправьте интересующий Вас вопрос', reply_markup=ReplyKeyboardRemove())
         bot.register_next_step_handler(message, get_question)
     elif message.text == 'id':
         candidate.idUser = message.from_user.id
@@ -151,17 +156,39 @@ def welcome(message):
 
 def get_question(message):
     # Добавление вопроса в Excel таблицу (Номер вопроса, id пользовтеля, метка о готовности ответа, вопрос, ответ)
-    question_to_excel(message)
-    bot.send_message(message.from_user.id,
-                     text='Спасибо за вопрос, он добавлен в базу. В скором времени на него ответят и вам придет уведомление.')
+    id = question_to_excel(message)
+    # bot.send_message(message.from_user.id,
+                     # text='Спасибо за вопрос, он добавлен в базу. В скором времени на него ответят и вам придет уведомление.')
+    go_to_main_menu(message, 'Спасибо за вопрос, он добавлен в базу. В скором времени на него ответят и вам придет уведомление.')
+
+    # markup = types.InlineKeyboardButton()
+    # markup.add(InlineKeyboardButton(text='Посмотреть', callback_data="{\"method\":\"pagination\",\"NumberPage\":" + str(
+    #                                                     page + 1) + ",\"IndexQuestion\":" + str(index) + "}"))
+    bot.send_message(510572383, 'Поступил новый вопрос от пользователя!')
 
 
-def get_answer(message, page, question):
+def get_answer(message, page, question, id):
     # Добавление ответа к строке с вопросом в Excel таблице (Номер вопроса, id пользовтеля, метка о готовности ответа, вопрос, ответ)
+    del_question(page + 1)
 
-    bot.send_message(510572383, text=f'<b>Офицер научной роты ответил на ваш вопрос.</b>\n' + question + '\n' + message.text, parse_mode="HTML")
+
+    bot.send_message(id, text=f'<b>Представитель научной роты ответил на ваш вопрос.</b>\n' + question + '\n' + message.text, parse_mode="HTML")
     go_to_main_menu(message, 'Ответ на данный вопрос отправлен пользователю')
 
+
+# def updateVolumes(df, number, id_user, is_ready, question, answer):
+#     try:
+#        df.loc[author][item] += amount
+#     except KeyError:
+#        df = pd.concat([df,pd.DataFrame([amount], index=[author], columns=[item])]).fillna(0)
+
+def del_question(id):
+    wb = load_workbook('documents/questions.xlsx')
+    sheet = wb.active
+    rows_count = sheet.max_row
+    sheet.delete_rows(id)
+
+    wb.save(filename='documents/questions.xlsx')
 
 def question_to_excel(message):
     wb = load_workbook('documents/questions.xlsx')
@@ -171,6 +198,7 @@ def question_to_excel(message):
     sheet.append(data)
 
     wb.save(filename='documents/questions.xlsx')
+    return rows_count
 
 
 def get_surname(message):
@@ -261,6 +289,16 @@ def send_docs(message):
     go_to_main_menu(message, 'Для прохождения следующих этапов отбора заполните документы')
     bot.send_document(message.chat.id, open(r'documents/Лист собеседования.docx', 'rb'))
     bot.send_document(message.chat.id, open(r'documents/Согласие.docx', 'rb'))
+    bot.send_message(510572383, text=f'<b>Зарегистрована новая заявка на поступление</b>\n' +
+                                     'ФИО: ' +
+                                     candidate.surname + ' ' +
+                                     candidate.name + ' ' +
+                                     candidate.patronymic + '\n' +
+                                     'Учебное заведение: ' +
+                                     candidate.university + '\n' +
+                                     'Номер телефона: ' +
+                                     candidate.phone_number,
+                     parse_mode="HTML")
 
 
 def type_recruitment(message):
@@ -387,7 +425,7 @@ def callback_inline(call):
                     question = df[1][index]
                     answer = df[2][index]
                     markup.add(InlineKeyboardButton(text=question,
-                                                    callback_data='{\"method\":\"question\",\"index\":' + str(
+                                                    callback_data='{\"method\":\"faq\",\"index\":' + str(
                                                         index) + '}'))
                     index += 1
 
@@ -417,18 +455,32 @@ def callback_inline(call):
 
                 # bot.send_message(call.message.chat.id, text=f'<b>Выберите интересующий вас вопрос</b>', parse_mode="HTML",
                 #                  reply_markup=markup)
-                bot.edit_message_text(text=f'<b>Выберите интересующий вас вопрос:</b>', parse_mode='HTML',
+                bot.edit_message_text(text=f'<b>Выберите интересующий Вас вопрос:</b>', parse_mode='HTML',
                                       reply_markup=markup, chat_id=call.message.chat.id,
                                       message_id=call.message.message_id)
+
+            elif 'faq' in call.data:
+                json_string = json.loads(req[0])
+                df = excel_to_2d_array('faq.xlsx')
+
+                index = json_string['index']
+
+                question = df[1][index]
+                answer = df[2][index]
+
+                bot.send_message(call.message.chat.id, text=f'<b>' + question + '</b>\n' + answer, parse_mode='HTML')
+
+
             elif 'answer' in call.data:
                 json_string = json.loads(req[0])
                 df = excel_to_2d_array('questions.xlsx')
                 page = json_string['NumberPage']
 
-                question = df[4][page]
+                id = df[1][page]
+                question = df[3][page]
 
                 bot.send_message(call.message.chat.id, text="Отправьте ответ на вопрос:\n" + question)
-                bot.register_next_step_handler(call.message, get_answer, page, question)
+                bot.register_next_step_handler(call.message, get_answer, page, question, id)
 
             elif 'question' in call.data:
                 json_string = json.loads(req[0])
@@ -468,6 +520,10 @@ def callback_inline(call):
                 bot.edit_message_text(text=question, parse_mode='HTML',
                                       reply_markup=markup, chat_id=call.message.chat.id,
                                       message_id=call.message.message_id)
+            # elif call.data == 'new_question':
+            #     df = excel_to_2d_array('questions.xlsx')
+            #
+            #     question = df[][]
             elif call.data == 'send_phone_number':
                 bot.register_next_step_handler(call.message, send_docs)
 
@@ -483,3 +539,4 @@ def excel_to_2d_array(name_doc):
 
 
 bot.polling()
+
