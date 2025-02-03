@@ -2,6 +2,7 @@ from telebot import TeleBot
 from telebot.types import Message
 
 from app.exceptions import ScoreException
+from app.presentation.buttons import get_main_keyboard
 from app.presentation.handlers.base import IHandler
 from app.presentation.handlers.find_out_handler import FindOutHandler
 from app.state import StateRecruitment
@@ -12,17 +13,24 @@ class AverageScoreHandler(IHandler):
         try:
             score = float(message.text.replace(',', '.'))
             user_id = message.from_user.id
+            start_command = self.ioc.start_usecase()
             if score < 4:
                 bot.send_message(
                     user_id,
                     'Ваш средний балл не соответствует требованиям.\n'
-                    'В научную роту рассматриваются кандидаты со средним баллом не менее 4.0'
+                    'В научную роту рассматриваются кандидаты со средним баллом не менее 4.0',
+                    reply_markup=get_main_keyboard(
+                        user_id == start_command.id_admin
+                    ),
                 )
                 raise ScoreException()
             elif score > 5:
                 bot.send_message(
                     user_id,
-                    'Введен некорректный балл, попробуйте снова'
+                    'Введен некорректный балл, попробуйте снова',
+                    reply_markup=get_main_keyboard(
+                        user_id == start_command.id_admin
+                    ),
                 )
                 self.next_handler(message, bot, AverageScoreHandler(self.ioc))
             self.set_state(

@@ -43,7 +43,7 @@ class QuestionGateway(BaseGateway[Question]):
             return model.into()
         return model
 
-    def get_all(self, limit: int, offset: int) -> Iterator[Question]:
+    def get_question(self, limit: int, offset: int) -> Question | None:
         stmt = (select(QuestionStorage)
         .limit(limit)
         .offset(offset)
@@ -51,7 +51,10 @@ class QuestionGateway(BaseGateway[Question]):
             QuestionStorage.is_answer == False
         ))
         result = self.session.execute(stmt)
-        return (model.into() for model in result.scalars())
+        model = result.scalar_one_or_none()
+        if model is not None:
+            return model.into()
+        return None
 
     def get_total(self) -> int:
         stmt = (

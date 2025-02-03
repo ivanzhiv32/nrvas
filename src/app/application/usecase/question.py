@@ -10,7 +10,7 @@ class QuestionList:
     limit: int
     offset: int
     total: int
-    questions: list[Question]
+    question: Question | None
 
 
 class QuestionUseCase:
@@ -28,12 +28,14 @@ class QuestionUseCase:
 
     def get_questions(self, limit: int, offset: int) -> QuestionList:
         total = self.question_gateway.get_total()
-        questions = self.question_gateway.get_all(limit, limit * offset)
+        if total == 0:
+            raise ValueError("Вопросы отсутствуют")
+        question = self.question_gateway.get_question(limit, limit * offset)
         return QuestionList(
             limit=limit,
             offset=offset,
             total=total,
-            questions=list(questions),
+            question=question,
         )
 
     def get(self, question_id: int) -> Question:
