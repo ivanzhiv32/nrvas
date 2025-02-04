@@ -15,8 +15,8 @@ class AnswerCallback(ICallback):
         question = usecase.get(question_id)
         bot.send_message(
             chat_id=call.message.chat.id,
-            text=f'Пользователь задал вопрос:\n\n{question.question}\n\n'
-                 'Напишите ему ответ'
+            text=f'Пользователь задал вопрос:\n\n<b>{question.question}</b>\n\n'
+                 'Напишите ему ответ:'
         )
         self.next_handler(
             call.message,

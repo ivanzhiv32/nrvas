@@ -44,40 +44,43 @@ class QuestionsCallback(ICallback):
         if offset + 1 == model.total:
             return markup.add(
                 InlineKeyboardButton(
-                    text='<--- Назад',
+                    text='⬅️',
                     callback_data=f'{{"method": "questions", '
                                   f'"NumberPage": {offset - 1}}}'
                 ),
+            ).add(
                 InlineKeyboardButton(
                     text='Скрыть',
                     callback_data='unseen',
-                )
+                ),
             )
         elif offset > 0:
             return markup.add(
                 InlineKeyboardButton(
-                    text='<--- Назад',
+                    text='⬅️',
                     callback_data=f'{{"method": "questions", '
                                   f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
-                    text='Скрыть',
-                    callback_data='unseen',
-                ),
-                InlineKeyboardButton(
-                    text='Вперёд --->',
+                    text='➡️',
                     callback_data=f'{{"method": "questions", '
                                   f'"NumberPage": {offset + 1}}}'
                 )
+            ).add(
+                InlineKeyboardButton(
+                    text='Скрыть',
+                    callback_data='unseen',
+                ),
             )
         return markup.add(
+            InlineKeyboardButton(
+                text='➡️',
+                callback_data=f'{{"method": "questions", '
+                              f'"NumberPage": {offset + 1}}}'
+            )
+        ).add(
             InlineKeyboardButton(
                 text='Скрыть',
                 callback_data='unseen',
             ),
-            InlineKeyboardButton(
-                text='Вперёд --->',
-                callback_data=f'{{"method": "questions", '
-                              f'"NumberPage": {offset + 1}}}'
-            )
         )

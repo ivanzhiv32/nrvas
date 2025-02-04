@@ -48,12 +48,13 @@ class IncomingQuestionHandler(IHandler):
         offset = model.offset + 1
         return markup.add(
             InlineKeyboardButton(
-                text='Скрыть',
-                callback_data='unseen',
-            ),
-            InlineKeyboardButton(
-                text='Вперёд --->',
+                text='➡️',
                 callback_data=f'{{"method": "questions", '
                               f'"NumberPage": {offset}}}'
             )
+        ).add(
+            InlineKeyboardButton(
+                text='Скрыть',
+                callback_data='unseen',
+            ),
         )

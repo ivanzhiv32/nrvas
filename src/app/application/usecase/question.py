@@ -22,9 +22,10 @@ class QuestionUseCase:
         self.question_gateway = question_gateway
         self.transaction = transaction
 
-    def add_question(self, question: Question) -> None:
-        self.question_gateway.add(question)
+    def add_question(self, question: Question) -> int:
+        question = self.question_gateway.add(question)
         self.transaction.commit()
+        return question.id
 
     def get_questions(self, limit: int, offset: int) -> QuestionList:
         total = self.question_gateway.get_total()

@@ -38,8 +38,16 @@ class FAQHandler(IHandler):
                                   f'"index": {value.id}}}',
                 )
             )
+        total_page = (model.total // LIMIT
+                      if model.total % LIMIT == 0
+                      else model.total // LIMIT + 1)
         if model.total < LIMIT:
             return markup.add(
+                InlineKeyboardButton(
+                    text=f'{model.offset + 1}/{total_page}',
+                    callback_data='  '
+                )
+            ).add(
                 InlineKeyboardButton(
                     text='Скрыть',
                     callback_data='unseen',
@@ -48,12 +56,17 @@ class FAQHandler(IHandler):
         offset = model.offset + 1
         return markup.add(
             InlineKeyboardButton(
-                text='Скрыть',
-                callback_data='unseen',
+                text=f'{offset}/{total_page}',
+                callback_data='  '
             ),
             InlineKeyboardButton(
-                text='Вперёд --->',
+                text='➡️',
                 callback_data=f'{{"method": "faq", '
                               f'"NumberPage": {offset}}}'
             )
+        ).add(
+            InlineKeyboardButton(
+                text='Скрыть',
+                callback_data='unseen',
+            ),
         )
