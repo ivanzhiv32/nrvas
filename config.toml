@@ -1,0 +1,5 @@
+[project]
+token = 'TOKEN'
+id_admin = ADMIN_ID
+database = 'postgresql+psycopg://postgres:password@db:5432/bot'
+base_dir = '/'

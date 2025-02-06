@@ -4,6 +4,7 @@ from telebot import TeleBot
 from telebot.types import Message
 
 from app.constants import MAX_AGE, MIN_AGE, FORMAT_BIRTHDATE
+from app.presentation.buttons import get_main_keyboard
 from app.presentation.handlers.base import IHandler
 from app.presentation.handlers.surname_handler import SurnameHandler
 from app.state import StateRecruitment
@@ -38,6 +39,8 @@ class BirthdateHandler(IHandler):
             self._invalid_birthdate(message, bot)
 
     def _invalid_age(self, message: Message, bot: TeleBot) -> None:
+        user_id = message.from_user.id
+        start_command = self.ioc.start_usecase()
         bot.send_message(
             message.chat.id,
             (
@@ -50,6 +53,7 @@ class BirthdateHandler(IHandler):
                 'или не состоящие, но обязанные состоять на воинском учете и не '
                 'пребывающие в запасе '
             ),
+            reply_markup=get_main_keyboard(user_id == start_command.id_admin),
         )
         bot.delete_state(user_id=message.from_user.id)
 

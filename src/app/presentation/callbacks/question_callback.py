@@ -10,7 +10,7 @@ from telebot.types import (
 from app.application.usecase.question import QuestionList
 from app.presentation.callbacks.base import ICallback
 
-LIMIT = 5
+LIMIT = 1
 
 
 class QuestionsCallback(ICallback):
@@ -21,7 +21,7 @@ class QuestionsCallback(ICallback):
         model = usecase.get_questions(LIMIT, offset)
         bot.edit_message_text(
             chat_id=call.message.chat.id,
-            text='<b>Пользователи задали следующие вопросы</b>',
+            text=f'<b>{model.question.question}</b>',
             parse_mode='HTML',
             reply_markup=self._get_keyboard(model, data),
             message_id=call.message.message_id,
@@ -33,52 +33,54 @@ class QuestionsCallback(ICallback):
             data: dict[str, Any]
     ) -> InlineKeyboardMarkup:
         markup = InlineKeyboardMarkup()
-        for _, value in enumerate(model.questions):
-            markup.add(
-                InlineKeyboardButton(
-                    text=value.question,
-                    callback_data=f'{{"method": "answer", '
-                                  f'"index": {value.id}}}',
-                )
+        markup.add(
+            InlineKeyboardButton(
+                text='Ответить',
+                callback_data=f'{{"method": "answer", '
+                              f'"index": {model.question.id}}}',
             )
+        )
         offset = data['NumberPage']
-        if len(model.questions) < model.limit or model.questions == 0:
+        if offset + 1 == model.total:
             return markup.add(
                 InlineKeyboardButton(
-                    text='<--- Назад',
+                    text='⬅️',
                     callback_data=f'{{"method": "questions", '
                                   f'"NumberPage": {offset - 1}}}'
                 ),
+            ).add(
                 InlineKeyboardButton(
                     text='Скрыть',
                     callback_data='unseen',
-                )
+                ),
             )
         elif offset > 0:
             return markup.add(
                 InlineKeyboardButton(
-                    text='<--- Назад',
+                    text='⬅️',
                     callback_data=f'{{"method": "questions", '
                                   f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
-                    text='Скрыть',
-                    callback_data='unseen',
-                ),
-                InlineKeyboardButton(
-                    text='Вперёд --->',
+                    text='➡️',
                     callback_data=f'{{"method": "questions", '
                                   f'"NumberPage": {offset + 1}}}'
                 )
+            ).add(
+                InlineKeyboardButton(
+                    text='Скрыть',
+                    callback_data='unseen',
+                ),
             )
         return markup.add(
+            InlineKeyboardButton(
+                text='➡️',
+                callback_data=f'{{"method": "questions", '
+                              f'"NumberPage": {offset + 1}}}'
+            )
+        ).add(
             InlineKeyboardButton(
                 text='Скрыть',
                 callback_data='unseen',
             ),
-            InlineKeyboardButton(
-                text='Вперёд --->',
-                callback_data=f'{{"method": "questions", '
-                              f'"NumberPage": {offset + 1}}}'
-            )
         )

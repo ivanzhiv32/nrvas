@@ -42,46 +42,64 @@ class FAQCallback(ICallback):
                                   f'"index": {value.id}}}',
                 )
             )
+        total_page = (model.total // LIMIT
+                      if model.total % LIMIT == 0
+                      else model.total // LIMIT + 1)
         offset = data['NumberPage']
-        if len(model.faq) < model.limit or model.faq == 0:
+        if total_page == offset + 1:
             return markup.add(
                 InlineKeyboardButton(
-                    text='<--- Назад',
+                    text='⬅️',
                     callback_data=f'{{"method": "faq", '
                                   f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
+                    text=f'{model.offset + 1}/{total_page}',
+                    callback_data='  '
+                )
+            ).add(
+                InlineKeyboardButton(
                     text='Скрыть',
                     callback_data='unseen',
-                )
+                ),
             )
         elif offset > 0:
             return markup.add(
                 InlineKeyboardButton(
-                    text='<--- Назад',
+                    text='⬅️',
                     callback_data=f'{{"method": "faq", '
                                   f'"NumberPage": {offset - 1}}}'
                 ),
                 InlineKeyboardButton(
-                    text='Скрыть',
-                    callback_data='unseen',
+                    text=f'{model.offset + 1}/{total_page}',
+                    callback_data='  '
                 ),
                 InlineKeyboardButton(
-                    text='Вперёд --->',
+                    text='➡️',
                     callback_data=f'{{"method": "faq", '
                                   f'"NumberPage": {offset + 1}}}'
                 )
+            ).add(
+                InlineKeyboardButton(
+                    text='Скрыть',
+                    callback_data='unseen',
+                ),
             )
         return markup.add(
+            InlineKeyboardButton(
+                text=f'{model.offset + 1}/{total_page}',
+                callback_data='  '
+            ),
+            InlineKeyboardButton(
+                text='➡️',
+                callback_data=f'{{"method": "faq", '
+                              f'"NumberPage": {offset + 1}}}'
+            )
+        ).add(
             InlineKeyboardButton(
                 text='Скрыть',
                 callback_data='unseen',
             ),
-            InlineKeyboardButton(
-                text='Вперёд --->',
-                callback_data=f'{{"method": "faq", '
-                              f'"NumberPage": {offset + 1}}}'
-            )
         )
 
 
@@ -90,7 +108,9 @@ class AnswerFAQCallback(ICallback):
         usecase = self.ioc.faq_usecase()
         data = json.loads(call.data)
         model = usecase.get_faq(data['index'])
+        text = f'<b>{model.question}</b>\n\n{model.answer}'
         bot.send_message(
             chat_id=call.message.chat.id,
-            text=model.answer,
+            text=text,
+            parse_mode='HTML'
         )

@@ -52,6 +52,14 @@ class SendingDocumentHandler(IHandler):
         )
         self._send_documents(message, bot)
         usecase.add_candidate(candidate)
+        bot.send_message(
+            self.ioc.id_admin,
+            text=('<b>Зарегистрована новая заявка на поступление</b>\n'
+                 f'ФИО: {candidate.surname} {candidate.name} {candidate.patronymic}\n'
+                  f'Учебное заведение: {candidate.university}\n'
+                  f'Номер телефона: {candidate.phone_number}'),
+            parse_mode='HTML'
+        )
 
     def _send_documents(self, message: Message, bot: TeleBot) -> None:
         chat_id = message.chat.id

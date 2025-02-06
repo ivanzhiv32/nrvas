@@ -127,6 +127,7 @@ def register_handlers(
 
 
 def main():
+    print(BASE_DIR)
     bot_config = load_config()
     state_storage = StateMemoryStorage()
     bot = TeleBot(
@@ -135,7 +136,7 @@ def main():
         use_class_middlewares=True,
     )
     ioc = IoC(
-        path=BASE_DIR,
+        path=bot_config.base_dir,
         id_admin=bot_config.id_admin,
         db_url=bot_config.database,
     )

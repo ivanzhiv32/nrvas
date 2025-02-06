@@ -1,4 +1,0 @@
-[project]
-token = 'TOKEN'
-id_admin = ID_ADMIN
-database = 'sqlite:///db.db'
