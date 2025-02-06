@@ -1,5 +1,5 @@
 [project]
-token = '7582780789:AAH1X-NrU3Zo9fv-SofGk7fbKE9XU6HKIqM'
-id_admin = 897714277
+token = 'TOKEN'
+id_admin = ADMIN_ID
 database = 'postgresql+psycopg://postgres:password@db:5432/bot'
 base_dir = '/'
