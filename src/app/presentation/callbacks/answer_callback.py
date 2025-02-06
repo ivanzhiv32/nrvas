@@ -16,10 +16,15 @@ class AnswerCallback(ICallback):
         bot.send_message(
             chat_id=call.message.chat.id,
             text=f'Пользователь задал вопрос:\n\n<b>{question.question}</b>\n\n'
-                 'Напишите ему ответ:'
+                 'Напишите ему ответ:',
+            parse_mode='HTML',
         )
         self.next_handler(
             call.message,
             bot,
-            AnswerToQuestionHandler(self.ioc, int(question_id))
+            AnswerToQuestionHandler(
+                self.ioc, 
+                int(question_id), 
+                int(question.user_id),
+            )
         )

@@ -25,14 +25,21 @@ class AnswerHandler(IHandler):
 
 
 class AnswerToQuestionHandler(IHandler):
-    def __init__(self, ioc: InteractorFactory, question_id: int) -> None:
+    def __init__(self, ioc: InteractorFactory, question_id: int, user_id: int) -> None:
         super().__init__(ioc)
         self._question_id = question_id
+        self._user_id = user_id
 
     def __call__(self, message: Message, bot: TeleBot) -> None:
         usecase = self.ioc.answer_usecase()
-        usecase.add_answer(self._question_id, message.text)
+        text = message.text
+        usecase.add_answer(self._question_id, text)
         bot.send_message(
             message.from_user.id,
             'Ответ добавлен в базу данных'
+        )
+        bot.send_message(
+            self._user_id,
+            f'<b>Ответ представителя на Ваш вопрос:</b>\n\n{text}',
+            parse_mode='HTML',
         )

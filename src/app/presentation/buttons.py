@@ -19,7 +19,7 @@ def get_main_keyboard(is_admin: bool) -> ReplyKeyboardMarkup:
     question = KeyboardButton('Входящие вопросы')
 
     if is_admin:
-        return markup.add(registration).row(
+        return markup.row(
             faq,
             telegram_channel,
             about,
