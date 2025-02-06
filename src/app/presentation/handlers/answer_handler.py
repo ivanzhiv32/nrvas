@@ -40,5 +40,6 @@ class AnswerToQuestionHandler(IHandler):
         )
         bot.send_message(
             self._user_id,
-            f'<b>Ответ представителя на Ваш вопрос:</b>\n{text}'
+            f'<b>Ответ представителя на Ваш вопрос:</b>\n{text}',
+            parse_mode='HTML',
         )
