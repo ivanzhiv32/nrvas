@@ -38,7 +38,7 @@ class IncomingQuestionHandler(IHandler):
                               f'"index": {model.question.id}}}',
             )
         )
-        if model.total < LIMIT:
+        if model.total <= LIMIT:
             return markup.add(
                 InlineKeyboardButton(
                     text='Скрыть',
