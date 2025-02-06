@@ -11,18 +11,18 @@ class FAQHandler(IHandler):
     def __call__(self, message: Message, bot: TeleBot) -> None:
         usecase = self.ioc.faq_usecase()
         model = usecase.get_faq_list(LIMIT, 0)
-        try:
-            bot.send_message(
-                message.chat.id,
-                text='<b>Выберите интересующий вас вопрос</b>',
-                parse_mode='HTML',
-                reply_markup=self._get_keyboard(model)
-            )
-        except ValueError:
+        if model.total == 0:
             bot.send_message(
                 message.chat.id,
                 text='<b>Скоро будут опубликованы часто задаваемые вопросы</b>',
                 parse_mode='HTML',
+            )
+            return
+        bot.send_message(
+                message.chat.id,
+                text='<b>Выберите интересующий вас вопрос</b>',
+                parse_mode='HTML',
+                reply_markup=self._get_keyboard(model)
             )
 
     def _get_keyboard(
