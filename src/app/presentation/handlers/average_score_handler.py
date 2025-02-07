@@ -33,6 +33,7 @@ class AverageScoreHandler(IHandler):
                     ),
                 )
                 self.next_handler(message, bot, AverageScoreHandler(self.ioc))
+                return
             self.set_state(
                 message,
                 bot,
