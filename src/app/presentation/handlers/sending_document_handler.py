@@ -45,7 +45,6 @@ class SendingDocumentHandler(IHandler):
                 find_out=data['find_out'],
                 phone_number=phone
             )
-
         doc = DocxTemplate(r'documents/Шаблон собеседования.docx')
         context = {
             'surname': candidate.surname,
@@ -59,7 +58,9 @@ class SendingDocumentHandler(IHandler):
             'average_score': candidate.average_score
         }
         doc.render(context)
-        doc.save(r'documents/Лист собеседования.docx')
+
+        path = self.ioc.path
+        doc.save(str(path / 'documents/Лист собеседования.docx'))
 
         bot.send_message(
             message.from_user.id,
@@ -80,13 +81,12 @@ class SendingDocumentHandler(IHandler):
 
     def _send_documents(self, message: Message, bot: TeleBot) -> None:
         chat_id = message.chat.id
-        user_id = message.from_user.id
         path = self.ioc.path
 
-        with open(path / r'C:\Users\Admin\PycharmProjects\nrvasBot\src\app\Лист собеседования.docx', 'rb') as file:
+        with open(path / 'documents/Лист собеседования.docx', 'rb') as file:
             bot.send_document(chat_id, file)
 
-        with open(path / r'documents/Согласие.docx', 'rb') as file:
+        with open(path / 'documents/Согласие.docx', 'rb') as file:
             bot.send_document(chat_id, file)
 
     def _add_to_excel(self, candidate: Candidate) -> None:
