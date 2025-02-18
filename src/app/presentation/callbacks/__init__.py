@@ -5,6 +5,8 @@ from .question_callback import QuestionsCallback
 from .recruitment_callback import RecruitmentCallback
 from .university_callback import UniversityCallback
 from .unseen_callback import UnseenCallback
+from .requirements_callback import RequirementsCallback
+from .specialties_callback import SpecialtiesCallback
 
 __all__ = ('UniversityCallback',
            'RecruitmentCallback',
@@ -13,4 +15,6 @@ __all__ = ('UniversityCallback',
            'UnseenCallback',
            'AnswerCallback',
            'QuestionsCallback',
-           'AnswerFAQCallback')
+           'AnswerFAQCallback',
+           'RequirementsCallback',
+           'SpecialtiesCallback')

@@ -1,6 +1,7 @@
 from openpyxl.reader.excel import load_workbook
 from telebot import TeleBot
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from docxtpl import DocxTemplate
 
 from app.domain.candidate import Candidate
 from app.presentation.buttons import get_main_keyboard
@@ -44,6 +45,22 @@ class SendingDocumentHandler(IHandler):
                 find_out=data['find_out'],
                 phone_number=phone
             )
+
+        doc = DocxTemplate(r'documents/Шаблон собеседования.docx')
+        context = {
+            'surname': candidate.surname,
+            'name': candidate.name,
+            'patronymic': candidate.patronymic,
+            'birthday': candidate.birthdate,
+            'phone_number': candidate.phone_number,
+            'nationality': 'Российская Федерация',
+            'university': candidate.university,
+            'specialization': candidate.field_study,
+            'average_score': candidate.average_score
+        }
+        doc.render(context)
+        doc.save(r'documents/Лист собеседования.docx')
+
         bot.send_message(
             message.from_user.id,
             'Поздравляем, Ваша кандидатура будет рассмотрена для поступления '
@@ -56,15 +73,17 @@ class SendingDocumentHandler(IHandler):
             self.ioc.id_admin,
             text=('<b>Зарегистрована новая заявка на поступление</b>\n'
                  f'ФИО: {candidate.surname} {candidate.name} {candidate.patronymic}\n'
-                  f'Учебное заведение: {candidate.university}\n'
-                  f'Номер телефона: {candidate.phone_number}'),
+                 f'Учебное заведение: {candidate.university}\n'
+                 f'Номер телефона: {candidate.phone_number}'),
             parse_mode='HTML'
         )
 
     def _send_documents(self, message: Message, bot: TeleBot) -> None:
         chat_id = message.chat.id
+        user_id = message.from_user.id
         path = self.ioc.path
-        with open(path / r'documents/Лист собеседования.docx', 'rb') as file:
+
+        with open(path / r'C:\Users\Admin\PycharmProjects\nrvasBot\src\app\Лист собеседования.docx', 'rb') as file:
             bot.send_document(chat_id, file)
 
         with open(path / r'documents/Согласие.docx', 'rb') as file:
