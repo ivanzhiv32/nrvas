@@ -1,5 +1,5 @@
 [project]
-token = 'TOKEN'
-id_admin = ADMIN_ID
-database = 'postgresql+psycopg://postgres:password@db:5432/bot'
-base_dir = '/'
+token = '7541371307:AAHfbOo47fs-eSGfVN63CeCg_bUvMKRaIRI'
+id_admin = 510572383
+database = 'postgresql+psycopg://postgres:iu9GumvgkNnWQn_@217.114.14.72:5432/bot'
+base_dir = 'C:\Users\Admin\PycharmProjects\nrvasBot'

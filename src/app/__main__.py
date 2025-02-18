@@ -10,7 +10,9 @@ from app.presentation.callbacks import (
     UnseenCallback,
     FAQCallback,
     AnswerFAQCallback,
-    AnswerCallback, QuestionsCallback,
+    AnswerCallback,
+    QuestionsCallback,
+    RequirementsCallback, SpecialtiesCallback,
 )
 from app.presentation.handlers import (
     StartHandler,
@@ -20,7 +22,8 @@ from app.presentation.handlers import (
     FAQHandler,
     DocumentHandler,
     IDHandler,
-    AboutHandler, IncomingQuestionHandler,
+    AboutHandler,
+    IncomingQuestionHandler,
 )
 
 
@@ -63,6 +66,16 @@ def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
     bot.register_callback_query_handler(
         QuestionsCallback(ioc),
         func=lambda call: 'questions' in call.data,
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        RequirementsCallback(ioc),
+        func=lambda call: 'requirements' in call.data,
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        SpecialtiesCallback(ioc),
+        func=lambda call: 'specialties' in call.data,
         pass_bot=True,
     )
 
