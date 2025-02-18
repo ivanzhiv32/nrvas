@@ -28,9 +28,6 @@ class AverageScoreHandler(IHandler):
                 bot.send_message(
                     user_id,
                     'Введен некорректный балл, попробуйте снова',
-                    reply_markup=get_main_keyboard(
-                        user_id == start_command.id_admin
-                    ),
                 )
                 self.next_handler(message, bot, AverageScoreHandler(self.ioc))
                 return

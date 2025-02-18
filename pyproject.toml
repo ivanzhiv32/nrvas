@@ -12,5 +12,6 @@ dependencies = [
 
     "SQLAlchemy<=2.0.37",
     "alembic<=1.14.0",
-    "psycopg[binary,pool]<=3.2.4"
+    "psycopg[binary,pool]<=3.2.4",
+    "docxtpl<=0.19.1",
 ]
