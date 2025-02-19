@@ -16,6 +16,7 @@ from .start_handler import StartHandler
 from .surname_handler import SurnameHandler
 from .telegram_handler import TelegramChannelHandler
 from .university_handler import UniversityHandler
+from .promo_handler import PromoHandler
 
 __all__ = (
     'AddingQuestionHandler',
@@ -36,4 +37,5 @@ __all__ = (
     'UniversityHandler',
     'AboutHandler',
     'IncomingQuestionHandler',
+    'PromoHandler'
 )

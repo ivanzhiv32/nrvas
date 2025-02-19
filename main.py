@@ -79,9 +79,10 @@ def go_to_main_menu(message, msg):
     kb_get_reg = types.KeyboardButton("Зарегистрироваться")
     kb_get_docs = types.KeyboardButton("Руководящие документы")
     kb_question = types.KeyboardButton("Входящие вопросы")
+    kb_promo = types.KeyboardButton("Промо")
 
     if is_admin == True:
-        kb_markup.add(kb_get_reg).row(kb_faq, kb_tg_channel, kb_about).add(kb_get_docs).add(kb_ask).add(kb_question)
+        kb_markup.add(kb_get_reg).row(kb_faq, kb_tg_channel, kb_about).add(kb_promo).add(kb_get_docs).add(kb_ask).add(kb_question)
     else:
         kb_markup.add(kb_get_reg).row(kb_faq, kb_tg_channel, kb_about).add(kb_get_docs).add(kb_ask)
     bot.send_message(message.chat.id, msg.format(message.from_user), parse_mode='html',

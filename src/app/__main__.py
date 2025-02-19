@@ -12,7 +12,12 @@ from app.presentation.callbacks import (
     AnswerFAQCallback,
     AnswerCallback,
     QuestionsCallback,
-    RequirementsCallback, SpecialtiesCallback,
+    RequirementsCallback,
+    SpecialtiesCallback,
+    PromoVideoCallback,
+    PromoBrochureCallback,
+    PromoStandCallback,
+    PromoCardCallback
 )
 from app.presentation.handlers import (
     StartHandler,
@@ -25,6 +30,7 @@ from app.presentation.handlers import (
     AboutHandler,
     IncomingQuestionHandler,
 )
+from app.presentation.handlers.promo_handler import PromoHandler
 
 
 def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
@@ -78,6 +84,26 @@ def register_callbacks(bot: TeleBot, ioc: IoC) -> None:
         func=lambda call: 'specialties' in call.data,
         pass_bot=True,
     )
+    bot.register_callback_query_handler(
+        PromoVideoCallback(ioc),
+        func=lambda call: 'promo_video' in call.data,
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        PromoBrochureCallback(ioc),
+        func=lambda call: 'promo_brochure' in call.data,
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        PromoStandCallback(ioc),
+        func=lambda call: 'promo_stand' in call.data,
+        pass_bot=True,
+    )
+    bot.register_callback_query_handler(
+        PromoCardCallback(ioc),
+        func=lambda call: 'promo_card' in call.data,
+        pass_bot=True,
+    )
 
 
 def register_handlers(
@@ -117,6 +143,12 @@ def register_handlers(
         FAQHandler(ioc),
         content_types=['text'],
         func=lambda message: message.text == 'FAQ',
+        pass_bot=True,
+    )
+    bot.register_message_handler(
+        PromoHandler(ioc),
+        content_types=['text'],
+        func=lambda message: message.text == 'Промо',
         pass_bot=True,
     )
     bot.register_message_handler(
